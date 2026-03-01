@@ -1,0 +1,32 @@
+import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  const events = await prisma.event.findMany({
+    include: {
+      employees: {
+        include: {
+          employee: true,
+        },
+      },
+    },
+  })
+
+  return NextResponse.json(events)
+}
+
+export async function POST(req: Request) {
+  const body = await req.json()
+    const { title, date, location, notes, clientId, venueId } = body;
+  const event = await prisma.event.create({
+    data: {
+      title: body.title,
+      date: new Date(body.date),
+      location: body.location,
+      notes: body.notes,
+    },
+  })onst { title, date, location, notes, clientId, venueId } = body;
+  co
+
+  return NextResponse.json(event)
+}

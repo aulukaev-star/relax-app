@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("manager")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  company   String?
+  source    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events    Event[]
+}
+
+model Employee {
+  id            String          @id @default(cuid())
+  name          String
+  role          String?
+  phone         String?
+  email         String?
+  createdAt     DateTime        @default(now())
+  managedEvents Event[]         @relation("EventManager")
+  events        EventEmployee[]
+}
+
+model Venue {
+  id     String  @id @default(cuid())
+  name   String
+  notes  String?
+  address String?
+  events Event[]
+  
+}
+
+model Event {
+  id        String          @id @default(cuid())
+  title     String
+  date      DateTime
+  location  String?
+  notes     String?
+  clientId  String?
+  venueId   String?
+  managerId String?
+  createdAt DateTime        @default(now())
+  client    Client?         @relation(fields: [clientId], references: [id])
+  manager   Employee?       @relation("EventManager", fields: [managerId], references: [id])
+  venue     Venue?          @relation(fields: [venueId], references: [id])
+  employees EventEmployee[]
+  finances  Finance[]
+}
+
+model EventEmployee {
+  id         String   @id @default(cuid())
+  eventId    String
+  employeeId String
+  role       String?
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  event      Event    @relation(fields: [eventId], references: [id])
+}
+
+model Finance {
+  id        String   @id @default(cuid())
+  title     String
+  amount    Float
+  type      String
+  eventId   String?
+  createdAt DateTime @default(now())
+  event     Event?   @relation(fields: [eventId], references: [id])
+}

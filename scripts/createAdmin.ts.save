@@ -1,0 +1,15 @@
+0)
+
+  await prisma.user.create({
+    data: {
+      name: 'Admin',
+      email: 'admin@crmno.ru',
+      password,
+      role: 'ADMIN'
+    }
+  })
+
+  console.log('Admin created')
+}
+
+main()

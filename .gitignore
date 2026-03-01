@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.env.production
+*.log
+crm-backup.sql
+relax-full-backup.tar.gz
+*.tar.gz
+

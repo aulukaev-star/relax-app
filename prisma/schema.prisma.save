@@ -1,0 +1,100 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  company   String?
+  source    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+}
+
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+
+  events       EventEmployee[]
+  managedEvents Event[] @relation("EventManager")
+}
+
+model Venue {
+  id        String   @id @default(cuid())
+  name      String
+  notes     String?
+
+  events Event[]
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime
+  location  String?
+  notes     String?
+
+  clientId  String?
+  client    Client? @relation(fields: [clientId], references: [id])
+
+  venueId   String?
+  venue     Venue? @relation(fields: [venueId], references: [id])
+
+  managerId String?
+  manager   Employee? @relation("EventManager", fields: [managerId], references: [id])
+
+  employees EventEmployee[]
+  finances  Finance[]
+
+  createdAt DateTime @default(now())
+}
+
+model EventEmployee {
+  id         String   @id @default(cuid())
+
+  eventId    String
+  employeeId String
+
+  role       String?
+
+  event      Event    @relation(fields: [eventId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model Finance {
+  id        String   @id @default(cuid())
+  title     String
+  amount    Float
+  type      String
+
+  eventId   String?
+  event     Event?   @relation(fields: [eventId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("ADMIN")
+
+  createdAt DateTime @default(now())
+}

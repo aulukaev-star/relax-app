@@ -1,0 +1,128 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+
+export default function EventPage() {
+  const params = useParams()
+  const id = params.id as string
+
+  const [event, setEvent] = useState<any>(null)
+  const [employees, setEmployees] = useState<any[]>([])
+
+  const [employeeId, setEmployeeId] = useState("")
+  const [role, setRole] = useState("")
+
+  const loadEvent = async () => {
+    const res = await fetch(`/api/events/${id}`)
+    const data = await res.json()
+    setEvent(data)
+  }
+
+  const loadEmployees = async () => {
+    const res = await fetch("/api/employees")
+    const data = await res.json()
+    setEmployees(data)
+  }
+
+  useEffect(() => {
+    if (id) {
+      loadEvent()
+      loadEmployees()
+    }
+  }, [id])
+
+  const addEmployee = async () => {
+    if (!employeeId) return alert("Выберите сотрудника")
+
+    await fetch("/api/event-employee", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        eventId: id,
+        employeeId,
+        role,
+      }),
+    })
+
+    setEmployeeId("")
+    setRole("")
+
+    loadEvent()
+  }
+
+  if (!event) return <div>Загрузка...</div>
+
+  return (
+    <div className="p-6 space-y-6">
+
+      <h1 className="text-2xl font-bold">
+        {event.title}
+      </h1>
+
+      {/* INFO */}
+      <div className="border p-4 rounded space-y-2">
+        <div>
+          <b>Дата:</b>{" "}
+          {new Date(event.date).toLocaleString()}
+        </div>
+
+        <div>
+          <b>Клиент:</b>{" "}
+          {event.client?.name || "—"}
+        </div>
+
+        <div>
+          <b>Площадка:</b>{" "}
+          {event.venue?.name || "—"}
+        </div>
+
+        <div>
+          <b>Локация:</b>{" "}
+          {event.location || "—"}
+        </div>
+
+        <div>
+          <b>Заметки:</b>{" "}
+          {event.notes || "—"}
+        </div>
+      </div>
+
+
+      {/* EMPLOYEES */}
+      <div className="border p-4 rounded space-y-3">
+        <h2 className="font-bold text-lg">Сотрудники</h2>
+
+        <select
+          className="border p-2 w-full"
+          value={employeeId}
+          onChange={e => setEmployeeId(e.target.value)}
+        >
+          <option value="">Выбрать сотрудника</option>
+
+          {employees.map(emp => (
+            <option key={emp.id} value={emp.id}>
+              {emp.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          className="border p-2 w-full"
+          placeholder="Роль"
+          value={role}
+          onChange={e => setRole(e.target.value)}
+        />
+
+        <button
+          className="bg-green-600 text-white px-4 py-2 rounded"
+          onClick={addEmployee}
+        >
+          Добавить сотрудника
+        </button>
+
+        <div className="space-y-1 pt-2">
+          {event.employees?.map((rel: any) => (
+ 

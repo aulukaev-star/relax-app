@@ -1,0 +1,102 @@
+"use client"
+
+import { useEffect, useState } from "react"
+
+export default function EventsPage() {
+  const [events, setEvents] = useState<any[]>([])
+  const [clients, setClients] = useState<any[]>([])
+
+  const [title, setTitle] = useState("")
+  const [date, setDate] = useState("")
+  const [clientId, setClientId] = useState("")
+
+  const loadEvents = async () => {
+    const res = await fetch("/api/events")
+    const data = await res.json()
+    setEvents(data)
+  }
+
+  const loadClients = async () => {
+    const res = await fetch("/api/clients")
+    const data = await res.json()
+    setClients(data)
+  }
+
+  useEffect(() => {
+    loadEvents()
+    loadClients()
+  }, [])
+
+  const createEvent = async () => {
+    if (!title || !date) {
+      alert("Введите название и дату")
+      return
+    }
+
+    await fetch("/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        date,
+        clientId: clientId || null,
+      }),
+    })
+
+    setTitle("")
+    setDate("")
+    setClientId("")
+    loadEvents()
+  }
+
+  return (
+    <div>
+      <h1>События</h1>
+
+      <div style={{ marginBottom: 20 }}>
+        <input
+          placeholder="Название события"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <input
+          type="datetime-local"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+
+        {/* ВЫБОР КЛИЕНТА */}
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
+        >
+          <option value="">Без клиента</option>
+
+          {clients.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        <button onClick={createEvent}>
+          ➕ Создать событие
+        </button>
+      </div>
+
+      <ul>
+        {events.map((e) => (
+          <li key={e.id}>
+            <b>{e.title}</b> — {new Date(e.date).toLocaleString()}
+            <div>
+              Клиент: {e.client?.name || "—"}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
