@@ -47,10 +47,19 @@ jobs:
 
           ssh -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
             set -e
-            cd "${APP_DIR}"
-            docker compose pull
-            docker compose up -d
+
+            echo "== Docker compose pull =="
+            docker compose -f ~/compose.yaml pull
+
+            echo "== Docker compose up -d =="
+            docker compose -f ~/compose.yaml up -d
+
+            echo "== Docker compose ps =="
+            docker compose -f ~/compose.yaml ps
+
+            echo "== Last logs (50 lines) =="
+            docker compose -f ~/compose.yaml logs --tail=50
+
+            echo "== Prune old images =="
             docker image prune -f
           EOF
-        env:
-          APP_DIR: ${{ secrets.APP_DIR }}
