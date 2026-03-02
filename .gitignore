@@ -7,3 +7,6 @@ crm-backup.sql
 relax-full-backup.tar.gz
 *.tar.gz
 
+
+# backups
+compose.yaml.bak.*
