@@ -8,7 +8,7 @@ export async function GET() {
 
   const calendar = events.map((e) => ({
     id: e.id,
-    title: `${e.title} — ${e.client?.name || ""}`,
+    title: `${e.title} â€” ${e.client?.name || ""}`,
     start: e.date,
     end: e.date,
   }))
