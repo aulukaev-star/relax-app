@@ -6,7 +6,7 @@ export async function GET() {
     include: { client: true },
   })
 
-  const calendar = events.map(e => ({
+  const calendar = events.map((e: unknown) => ({
     id: e.id,
     title: `${e.title} — ${e.client?.name || ""}`,
     start: e.date,
