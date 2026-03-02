@@ -1,8 +1,28 @@
+# зависимости и мусор
 node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# git
 .git
 .gitignore
+
+# env
 .env
-npm-debug.log
+.env.local
+.env.production
+.env.development
+
+# next
+.next/cache
+
+# docker
 Dockerfile
 docker-compose.yml
 compose.yaml
+
+# os / editor
+.DS_Store
+.idea
+.vscode
