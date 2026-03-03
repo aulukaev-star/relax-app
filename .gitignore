@@ -14,3 +14,17 @@ compose.yaml.bak.*
 # junk files
 11.11.0
 [builder
+
+# prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ssh keys (на всякий)
+*.pem
+*.key
