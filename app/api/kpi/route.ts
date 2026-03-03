@@ -1,36 +1,30 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-type KPIEvent = {
-  price: number
-}
+type CalendarClient = { name?: string | null } | null
 
-type KPIEmployee = {
+type CalendarEvent = {
   id: string | number
-  name: string
-  events: KPIEvent[]
+  title: string
+  date: string | Date
+  client?: CalendarClient
 }
 
 export async function GET() {
-  const employees = (await prisma.employee.findMany({
-    include: {
-      events: true,
-    },
-  })) as unknown as KPIEmployee[]
+  const events = (await prisma.event.findMany({
+    include: { client: true },
+  })) as unknown as CalendarEvent[]
 
-  const result = employees.map((emp: KPIEmployee) => {
-    let income = 0
-
-    emp.events.forEach((rel) => {
-      income += rel.price
-    })
+  const calendar = events.map((e: CalendarEvent) => {
+    const clientName = e.client?.name?.trim()
 
     return {
-      id: emp.id,
-      name: emp.name,
-      income,
+      id: e.id,
+      title: clientName ? `${e.title} — ${clientName}` : e.title,
+      start: e.date,
+      end: e.date,
     }
   })
 
-  return NextResponse.json(result)
+  return NextResponse.json(calendar)
 }
