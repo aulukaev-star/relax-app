@@ -27,13 +27,12 @@ export function proxy(req: NextRequest) {
 
   // 3) Публичные API (auth)
   if (
-    pathname === "/api/auth/login" ||
-    pathname === "/api/auth/logout" ||
-    pathname === "/api/auth/me"
-    // если /api/ai должен быть публичным, раскомментируй:
-    // || pathname === "/api/ai"
-  ) {
-    return NextResponse.next()
+  pathname === "/api/auth/login" ||
+  pathname === "/api/auth/logout" ||
+  pathname === "/api/auth/me" ||
+  pathname === "/api/health"
+) {
+  return NextResponse.next()
   }
 
   const token = req.cookies.get("token")?.value
