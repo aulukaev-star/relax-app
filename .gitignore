@@ -10,3 +10,7 @@ relax-full-backup.tar.gz
 
 # backups
 compose.yaml.bak.*
+
+# junk files
+11.11.0
+[builder
